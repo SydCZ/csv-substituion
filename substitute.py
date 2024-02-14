@@ -1,5 +1,5 @@
 """
-substitue.py
+substitute.py
 
 Description: Used for substitute or anonymize data
 Author: Michal Panek
@@ -7,8 +7,6 @@ Author: Michal Panek
 MIT License
 Copyright (c) 2024 Michal Panek
 """
-
-# /home/mpanek/git/csv-substituion/test-data/WG/Anonymization-memcon1.csv
 
 import csv
 import os
@@ -84,8 +82,8 @@ def substitute_values_in_csv(csv_file_path, original_number, new_number, column)
             # Write the updated row to the temporary file
             writer.writerow(row)
 
-    # Replace the original file with the temporary file
-    # os.replace(temp_file_path, csv_file_path)
+    # Rename the temporary file
+    os.replace(temp_file_path, csv_file_path)
 
 def extract_number_from_path(path):
     # Extract the numbers from the path using a regular expression
@@ -121,13 +119,18 @@ def main():
                 original, new = process_anonymization_pair(line)
                 search_term = str(original)
                 found_files = search_files(directory_to_search, search_term)
-                print(f"Original number: {original}, New number: {new}")
+                print("-" * 15)
+                print(f"Original number: {original}, new number: {new}")
                 print("Found files:")
                 for file_path in found_files:
                     print(file_path)
+                    print()
+                    print(f"Editing files {original} -> {new}")
                     substitute_values_in_csv(file_path, original, new, "logfile")
                     substitute_values_in_csv(file_path, original, new, "subject_nr")
-                
+                    anonymized_file_name = file_path.replace(str(original), str(new) + "_anonymized")
+                    print(f"Renaming original {file_path} to {anonymized_file_name}")
+                    os.replace(file_path, anonymized_file_name)
 
 if __name__ == "__main__":
     main()
